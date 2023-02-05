@@ -22,9 +22,7 @@ class DoordashGenerator:
         self.play = sync_playwright().start()
         self.config = self.load_config("config.toml")
 
-        headless = self.config.get("headless")
-        if headless == None:
-            headless = True
+        headless = self.config.get("headless", True)
 
         self.browser = self.play.firefox.launch(headless=headless)
         pass
@@ -32,7 +30,7 @@ class DoordashGenerator:
     def run(self):
         self.load_config("config.toml")
 
-        quantity = self.config.get("quantity") or 1
+        quantity = self.config.get("quantity", 1)
 
         _LOGGER.info(f"Generating {quantity} account(s)...")
 
@@ -56,9 +54,7 @@ class DoordashGenerator:
 
         phone_number = f"0452{self.generate_digits(6)}"
 
-        password = self.config.get("password")
-        if password is None:
-            password = self.generate_password(12)
+        password = self.config.get("password", self.generate_password(12))
 
         page.goto(DOORDASH_URL)
         page.locator('css=[data-anchor-id="IdentitySignupFirstNameField"]').fill(
